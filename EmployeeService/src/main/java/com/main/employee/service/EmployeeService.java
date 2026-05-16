@@ -1,6 +1,9 @@
 package com.main.employee.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +18,21 @@ public class EmployeeService {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	AuthenticationManager authmngr;
+	
+	@Autowired
+	JwtService jwtService;
+	
 	public String validateUser(Employee emp)
 	{
 		if(emp.getEmail()==null || "".equalsIgnoreCase(emp.getEmail()))
 			return "Email Id is required";
 		if(emp.getPassword()==null || "".equalsIgnoreCase(emp.getPassword()))
 			return "Password is required";
-		Employee employee = emprepo.findByEmail(emp.getEmail());
-		if(employee==null || !passwordEncoder.matches(emp.getPassword(), employee.getPassword()))
-			return "Invalid Email or password";
-		
-		return "User "+employee.getName()+" Logged in Successfully";
+		Authentication auth = authmngr.authenticate(new UsernamePasswordAuthenticationToken(emp.getEmail(), emp.getPassword()));
+		if(auth.isAuthenticated())
+			return jwtService.generateToken(emp.getEmail());
+		return "Invalid Username or Password";
 	}
 }
