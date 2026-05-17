@@ -1,8 +1,12 @@
 package com.main.employee.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,9 +29,12 @@ public class EmployeeController {
 		return ResponseEntity.ok(msg);
 	}
 	
-	@GetMapping("/hello")
-	public @ResponseBody ResponseEntity<String> hello()
+	@GetMapping("/getEmpDetails/{empId}")
+	public @ResponseBody ResponseEntity<Employee> hello(@PathVariable long empId,Authentication authentication)
 	{
-		return ResponseEntity.ok("Hello");
+		Employee emp = empservice.getEmployee(empId,authentication);
+		if(emp==null)
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		return ResponseEntity.ok(emp);
 	}
 }

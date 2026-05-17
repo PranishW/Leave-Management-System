@@ -35,4 +35,21 @@ public class EmployeeService {
 			return jwtService.generateToken(emp.getEmail());
 		return "Invalid Username or Password";
 	}
+	
+	public Employee getEmployee(long empId,Authentication auth)
+	{
+		Employee emp =null;
+		try
+		{
+			String email = auth.getName();
+			emp = emprepo.findByEmail(email);
+			if(emp.getEmployeeId()==empId)
+				return emp;
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error fetching employee details"+e);
+		}
+		return null;
+	}
 }
