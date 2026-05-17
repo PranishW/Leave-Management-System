@@ -1,5 +1,6 @@
 package com.main.employee.service;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.main.employee.models.Employee;
+import com.main.employee.models.UserPrincipal;
 import com.main.employee.repository.EmployeeRepository;
 
 @Service
@@ -32,7 +34,15 @@ public class EmployeeService {
 			return "Password is required";
 		Authentication auth = authmngr.authenticate(new UsernamePasswordAuthenticationToken(emp.getEmail(), emp.getPassword()));
 		if(auth.isAuthenticated())
-			return jwtService.generateToken(emp.getEmail());
+		{
+			UserPrincipal e = (UserPrincipal) auth.getPrincipal();
+			String role = auth.getAuthorities()
+			        .stream()
+			        .findFirst()
+			        .get()
+			        .getAuthority();
+			return jwtService.generateToken(e.getUsername(),role,e.getEmployeeId());
+		}
 		return "Invalid Username or Password";
 	}
 	
