@@ -33,12 +33,14 @@ public class JwtFilter extends OncePerRequestFilter {
 	        String username = null;
 	        String jwtToken = null;
 	        String role=null;
+	        long empId=0l;
 
 	        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
 	            jwtToken = requestTokenHeader.substring(7);
 	            try {
 	                username = jwtService.extractUserName(jwtToken);
 	                role=jwtService.extractRole(jwtToken);
+	                empId=jwtService.extractEmpId(jwtToken);
 	            } catch (IllegalArgumentException e) {
 	                System.out.println("Unable to get JWT Token");
 	            } catch (ExpiredJwtException e) {
@@ -53,6 +55,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         List.of(new SimpleGrantedAuthority(role));
 	                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 	                		username, null, authorities);
+	                usernamePasswordAuthenticationToken.setDetails(empId);
 	                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 	        }
 	        filterChain.doFilter(request, response);}
