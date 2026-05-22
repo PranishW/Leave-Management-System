@@ -30,7 +30,7 @@ public class EmployeeController {
 	}
 	
 	@GetMapping("/getEmpDetails/{empId}")
-	public @ResponseBody ResponseEntity<Employee> hello(@PathVariable long empId,Authentication authentication)
+	public @ResponseBody ResponseEntity<Employee> fetchEmpDetails(@PathVariable long empId,Authentication authentication)
 	{
 		Employee emp = empservice.getEmployee(empId,authentication);
 		if(emp==null)
