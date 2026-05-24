@@ -1,0 +1,39 @@
+package com.main.email.listener;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+
+import com.main.email.models.MailEvent;
+
+@Service
+public class EmailListener {
+
+	@Autowired
+	private JavaMailSender javaMailSender;
+
+	@KafkaListener(topics = "${spring.kafka.topic.name}", groupId = "${spring.kafka.consumer.group-id}")
+	public void onMessage(MailEvent mail) {
+		String to = mail.getEmailId();
+		String subject="Subject";
+		String body=mail.getMsg();
+		sendEmail(to,subject,body);
+	}
+	
+	public void sendEmail(String to,String subject,String body)
+	{	
+		try
+		{
+			SimpleMailMessage mail =new SimpleMailMessage();
+			mail.setTo(to);
+			mail.setSubject(subject);
+			mail.setText(body);
+		}
+		catch(Exception e)
+		{
+			
+		}
+	}
+}
