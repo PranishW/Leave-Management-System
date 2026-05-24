@@ -45,10 +45,7 @@ public class EmployeeLeaveRequestService {
 				leavebalRepo.save(lb);
 				msg = "Leave request initiated, Pending for approval with your manager. Leave Request Id - "+leaveReq.getLeaveRequestId();
 				MailEvent mail = new MailEvent();
-				mail.setEmailId(email);
-				mail.setMsg("Leave request initiated, Pending for approval with your manager. Leave Request Id - "+leaveReq.getLeaveRequestId());
-				mail.setStatus("Pending");
-				mail.setLeaveReqId(leaveReq.getLeaveRequestId());
+				setEmailEvent(mail, leaveReq, email, msg);
 				sendEmailMsg(mail);
 			}
 			else
@@ -90,5 +87,16 @@ public class EmployeeLeaveRequestService {
             	System.out.println("Kafka publish failed"+ex);
             }
         });
+	}
+	
+	public void setEmailEvent(MailEvent mail,LeaveRequest leaveReq,String email,String msg)
+	{
+		mail.setEmailId(email);
+		mail.setMsg(msg);
+		mail.setStatus(leaveReq.getStatus());
+		mail.setLeaveReqId(leaveReq.getLeaveRequestId());
+		mail.setEndDate(leaveReq.getEndDate());
+		mail.setStartDate(leaveReq.getStartDate());
+		mail.setLeaveDays(leaveReq.getLeaveDays());
 	}
 }
