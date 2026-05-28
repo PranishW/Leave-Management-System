@@ -6,7 +6,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import com.main.email.models.MailEvent;
+import com.main.vo.MailEvent;
+
 
 @Service
 public class EmailListener {
@@ -30,10 +31,12 @@ public class EmailListener {
 			mail.setTo(to);
 			mail.setSubject(subject);
 			mail.setText(body);
+			javaMailSender.send(mail);
+			System.out.println("Email Message sent successfully");
 		}
 		catch(Exception e)
 		{
-			
+			System.out.println("Error while sending Email :- "+e);
 		}
 	}
 }
