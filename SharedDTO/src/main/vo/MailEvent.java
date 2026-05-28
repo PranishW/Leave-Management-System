@@ -1,5 +1,4 @@
-package com.main.leave.models;
-
+package main.vo;
 
 public class MailEvent {
 	private String msg;
