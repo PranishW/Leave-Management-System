@@ -10,7 +10,7 @@ import com.main.leave.Repo.LeaveBalanceRepository;
 import com.main.leave.Repo.LeaveRequestsRepository;
 import com.main.leave.models.LeaveBalance;
 import com.main.leave.models.LeaveRequest;
-import com.main.leave.models.MailEvent;
+import com.main.vo.MailEvent;
 
 @Service
 public class EmployeeLeaveRequestService {
@@ -73,7 +73,7 @@ public class EmployeeLeaveRequestService {
 		return lb;
 	}
 	
-	public void sendEmailMsg(MailEvent mail)
+	public void sendEmailMsg(com.main.vo.MailEvent mail)
 	{
 		kafkatemplate.send(kafkaTopic, mail)
         .whenComplete((result, ex) -> {
