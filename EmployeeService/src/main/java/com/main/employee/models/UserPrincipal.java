@@ -36,12 +36,8 @@ public class UserPrincipal implements UserDetails{
 		// TODO Auto-generated method stub
 		return emp.getEmail();
 	}
-	public Long getEmployeeId()
+	public Employee getEmpDetails()
 	{
-		return emp.getEmployeeId();
-	}
-	public String getName()
-	{
-		return emp.getName();
+		return emp;
 	}
 }

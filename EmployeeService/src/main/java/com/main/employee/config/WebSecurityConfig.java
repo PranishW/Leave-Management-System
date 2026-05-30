@@ -34,6 +34,7 @@ public class WebSecurityConfig {
         http.csrf(csrf -> csrf.disable())
         .authorizeHttpRequests((requests) -> 
         requests.requestMatchers("/employees/login").permitAll()
+        .requestMatchers("/employees/getManagerDetails").hasAuthority("Employee")
         .anyRequest().authenticated()
         )
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

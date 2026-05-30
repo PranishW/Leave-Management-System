@@ -5,12 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.main.employee.models.Employee;
 import com.main.employee.models.UserPrincipal;
 import com.main.employee.repository.EmployeeRepository;
+import com.main.employee.utils.SecurityUtil;
 
 @Service
 public class EmployeeService {
@@ -26,6 +28,9 @@ public class EmployeeService {
 	@Autowired
 	JwtService jwtService;
 	
+	@Autowired
+	SecurityUtil secUtil;
+	
 	public String validateUser(Employee emp)
 	{
 		if(emp.getEmail()==null || "".equalsIgnoreCase(emp.getEmail()))
@@ -36,30 +41,42 @@ public class EmployeeService {
 		if(auth.isAuthenticated())
 		{
 			UserPrincipal e = (UserPrincipal) auth.getPrincipal();
+			Employee empDetails = e.getEmpDetails();
 			String role = auth.getAuthorities()
 			        .stream()
 			        .findFirst()
 			        .get()
 			        .getAuthority();
-			return jwtService.generateToken(e.getUsername(),role,e.getEmployeeId(),e.getName());
+			return jwtService.generateToken(e.getUsername(),role,empDetails.getEmployeeId(),empDetails.getName());
 		}
 		return "Invalid Username or Password";
 	}
 	
-	public Employee getEmployee(long empId,Authentication auth)
+	public Employee getEmployee()
 	{
-		Employee emp =null;
 		try
 		{
-			String email = auth.getName();
-			emp = emprepo.findByEmail(email);
-			if(emp.getEmployeeId()==empId)
-				return emp;
+			return secUtil.getCurrentUser().getEmpDetails();
 		}
 		catch(Exception e)
 		{
 			System.out.println("Error fetching employee details"+e);
 		}
 		return null;
+	}
+	public Employee getManagerById()
+	{
+		Employee emp = null;
+		try
+		{
+			emp = getEmployee();
+			long managerId = Long.valueOf(emp.getManagerId());
+			emp = emprepo.findById(managerId).get();
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error fetching manager details"+e);
+		}
+		return emp;
 	}
 }

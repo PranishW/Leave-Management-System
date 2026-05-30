@@ -29,12 +29,21 @@ public class EmployeeController {
 		return ResponseEntity.ok(msg);
 	}
 	
-	@GetMapping("/getEmpDetails/{empId}")
-	public @ResponseBody ResponseEntity<Employee> fetchEmpDetails(@PathVariable long empId,Authentication authentication)
+	@GetMapping("/getEmpDetails")
+	public @ResponseBody ResponseEntity<Employee> fetchEmpDetails()
 	{
-		Employee emp = empservice.getEmployee(empId,authentication);
+		Employee emp = empservice.getEmployee();
 		if(emp==null)
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		return ResponseEntity.ok(emp);
+	}
+	
+	@GetMapping("/getManagerDetails")
+	public @ResponseBody ResponseEntity<Employee> getManagerDetails()
+	{
+		Employee emp = empservice.getManagerById();
+		if(emp==null)
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		return ResponseEntity.ok(emp);
 	}
 }
