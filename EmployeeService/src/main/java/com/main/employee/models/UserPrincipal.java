@@ -40,4 +40,8 @@ public class UserPrincipal implements UserDetails{
 	{
 		return emp.getEmployeeId();
 	}
+	public String getName()
+	{
+		return emp.getName();
+	}
 }

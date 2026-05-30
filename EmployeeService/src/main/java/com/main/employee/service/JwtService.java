@@ -27,11 +27,12 @@ public class JwtService {
 		key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 	}
 
-	public String generateToken(String username,String role,Long empId) {
+	public String generateToken(String username,String role,Long empId,String name) {
 		Map<String, Object> claims = new HashMap<>(); // Claims can include custom data (e.g., roles, permissions)}
 		// adding custom claim
 		claims.put("role",role);
 		claims.put("empId", empId);
+		claims.put("name",name);
 		return Jwts.builder().setClaims(claims) // Add claims to the token
 				.setSubject(username) // Set the subject (e.g., the username)
 				.setIssuedAt(new Date(System.currentTimeMillis())) // Current time as issue time

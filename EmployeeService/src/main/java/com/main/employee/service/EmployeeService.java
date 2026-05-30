@@ -41,7 +41,7 @@ public class EmployeeService {
 			        .findFirst()
 			        .get()
 			        .getAuthority();
-			return jwtService.generateToken(e.getUsername(),role,e.getEmployeeId());
+			return jwtService.generateToken(e.getUsername(),role,e.getEmployeeId(),e.getName());
 		}
 		return "Invalid Username or Password";
 	}
