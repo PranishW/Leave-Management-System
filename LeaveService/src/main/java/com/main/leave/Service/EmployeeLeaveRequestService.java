@@ -6,8 +6,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.main.leave.Repo.LeaveBalanceRepository;
-import com.main.leave.Repo.LeaveRequestsRepository;
+import com.main.leave.Interfaces.LeaveBalanceRepository;
+import com.main.leave.Interfaces.LeaveRequestsRepository;
 import com.main.leave.models.LeaveBalance;
 import com.main.leave.models.LeaveRequest;
 import com.main.vo.MailEvent;
