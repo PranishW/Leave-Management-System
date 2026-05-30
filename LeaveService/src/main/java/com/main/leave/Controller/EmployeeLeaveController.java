@@ -33,7 +33,7 @@ public class EmployeeLeaveController {
 			long authId=secUtil.getLoggedinEmpId();
 			if (authId != 0)
 				req.setEmployeeId(authId);
-			String msg = empService.initiateLeaveRequest(req,secUtil.getCurrentUsername());
+			String msg = empService.initiateLeaveRequest(req,secUtil.getCurrentUsername(),secUtil.getEmployeeName());
 			return ResponseEntity.ok(msg);
 		} catch (Exception e) {
 			System.out.println("in initiateLeave catch :- "+e);
@@ -46,7 +46,8 @@ public class EmployeeLeaveController {
 	{
 		try {
 			long authId=secUtil.getLoggedinEmpId();
-			if (authId == 0 || authId!=empId)
+			String role = secUtil.getCurrentRole();
+			if (authId == 0 || (authId!=empId && !"Manager".equalsIgnoreCase(role)))
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 			LeaveBalance leaveBal = empService.getLeaveBalance(empId);
 			return ResponseEntity.ok(leaveBal);

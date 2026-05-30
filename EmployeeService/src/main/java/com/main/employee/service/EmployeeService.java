@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +12,7 @@ import com.main.employee.models.Employee;
 import com.main.employee.models.UserPrincipal;
 import com.main.employee.repository.EmployeeRepository;
 import com.main.employee.utils.SecurityUtil;
+import com.main.vo.Manager;
 
 @Service
 public class EmployeeService {
@@ -64,19 +64,21 @@ public class EmployeeService {
 		}
 		return null;
 	}
-	public Employee getManagerById()
+	public Manager getManagerById()
 	{
 		Employee emp = null;
+		Manager mn = null;
 		try
 		{
 			emp = getEmployee();
 			long managerId = Long.valueOf(emp.getManagerId());
 			emp = emprepo.findById(managerId).get();
+			mn = new Manager(emp.getName(), managerId);
 		}
 		catch(Exception e)
 		{
 			System.out.println("Error fetching manager details"+e);
 		}
-		return emp;
+		return mn;
 	}
 }

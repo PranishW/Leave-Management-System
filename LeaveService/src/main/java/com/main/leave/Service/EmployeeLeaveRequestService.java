@@ -6,11 +6,13 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.main.leave.Interfaces.EmployeeClient;
 import com.main.leave.Interfaces.LeaveBalanceRepository;
 import com.main.leave.Interfaces.LeaveRequestsRepository;
 import com.main.leave.models.LeaveBalance;
 import com.main.leave.models.LeaveRequest;
 import com.main.vo.MailEvent;
+import com.main.vo.Manager;
 
 @Service
 public class EmployeeLeaveRequestService {
@@ -19,6 +21,9 @@ public class EmployeeLeaveRequestService {
 	
 	@Autowired
 	LeaveBalanceRepository leavebalRepo;
+	
+	@Autowired
+	EmployeeClient empClient;
 	
 	@Value("${spring.kafka.topic.name}")
 	private String kafkaTopic;
@@ -30,23 +35,29 @@ public class EmployeeLeaveRequestService {
 		this.kafkatemplate = kafkatemplate;
 	}
 	
-	public String initiateLeaveRequest(LeaveRequest leaveReq,String email)
+	public String initiateLeaveRequest(LeaveRequest leaveReq,String email,String empName)
 	{
+		String emailMsg="";
 		String msg="";
+		Manager mn=null;
 		try
 		{
 			LeaveBalance lb = getLeaveBalance(leaveReq.getEmployeeId());
 			if(lb.getRemaining()>=leaveReq.getLeaveDays())
 			{
+				mn = empClient.getManagerDetails();
 				leaveReq.setStatus("Pending");
 				lb.setRemaining(lb.getRemaining()-leaveReq.getLeaveDays());
 				lb.setUsed(lb.getUsed()+leaveReq.getLeaveDays());
 				leaveReq = leavereqRepo.save(leaveReq);
 				leavebalRepo.save(lb);
-				msg = "Leave request initiated, Pending for approval with your manager. Leave Request Id - "+leaveReq.getLeaveRequestId();
+				emailMsg = "Dear "+empName+",\n\nLeave request initiated, pending for approval with your manager ( "+mn.getManagerName()+" , Employee Id - "+mn.getId()+" ) . Leave Request Id - "+leaveReq.getLeaveRequestId()+
+				"\n\nLeave From : "+leaveReq.getStartDate()+"\nLeave Till : "+leaveReq.getEndDate()+"\nLeave Days : "+leaveReq.getLeaveDays()+
+				"\n\nRegards,\nLeave Service LTD";
 				MailEvent mail = new MailEvent();
-				setEmailEvent(mail, leaveReq, email, msg);
+				setEmailEvent(mail, leaveReq, email, emailMsg);
 				sendEmailMsg(mail);
+				msg = "Leave request Initiated Successfully. Leave Request Id - "+leaveReq.getLeaveRequestId();
 			}
 			else
 				msg = "Not enough leaves";
@@ -95,8 +106,5 @@ public class EmployeeLeaveRequestService {
 		mail.setMsg(msg);
 		mail.setStatus(leaveReq.getStatus());
 		mail.setLeaveReqId(leaveReq.getLeaveRequestId());
-		mail.setEndDate(leaveReq.getEndDate());
-		mail.setStartDate(leaveReq.getStartDate());
-		mail.setLeaveDays(leaveReq.getLeaveDays());
 	}
 }

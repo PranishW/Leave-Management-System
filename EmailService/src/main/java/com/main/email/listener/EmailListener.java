@@ -17,8 +17,13 @@ public class EmailListener {
 
 	@KafkaListener(topics = "${spring.kafka.topic.name}", groupId = "${spring.kafka.consumer.group-id}")
 	public void onMessage(MailEvent mail) {
+		String subject="Leave Request Initiated || Leave Request Id - "+mail.getLeaveReqId();
 		String to = mail.getEmailId();
-		String subject="Subject";
+		String status = mail.getStatus();
+		if("Approved".equalsIgnoreCase(status))
+			subject=subject.replace("Initiated","Approved");
+		else if("Rejected".equalsIgnoreCase(status))
+			subject=subject.replace("Initiated","Rejected");
 		String body=mail.getMsg();
 		sendEmail(to,subject,body);
 	}

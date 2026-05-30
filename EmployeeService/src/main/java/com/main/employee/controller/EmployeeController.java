@@ -2,11 +2,8 @@ package com.main.employee.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.main.employee.models.Employee;
 import com.main.employee.service.EmployeeService;
+import com.main.vo.Manager;
 
 @RestController
 @RequestMapping("/employees")
@@ -39,9 +37,9 @@ public class EmployeeController {
 	}
 	
 	@GetMapping("/getManagerDetails")
-	public @ResponseBody ResponseEntity<Employee> getManagerDetails()
+	public @ResponseBody ResponseEntity<Manager> getManagerDetails()
 	{
-		Employee emp = empservice.getManagerById();
+		Manager emp = empservice.getManagerById();
 		if(emp==null)
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		return ResponseEntity.ok(emp);

@@ -13,6 +13,10 @@ public class SecurityUtil {
                 .getContext()
                 .getAuthentication();
     }
+	@SuppressWarnings("unchecked")
+	private Pair<Long, String> empDetails() {
+		return (Pair<Long,String>) getAuthentication().getDetails();
+	}
     public String getCurrentUsername() {
         return getAuthentication().getName();
     }
@@ -28,6 +32,10 @@ public class SecurityUtil {
     
     public Long getLoggedinEmpId()
     {
-    	return (Long) getAuthentication().getDetails();
+    	return empDetails().getKey();
+    }
+    public String getEmployeeName()
+    {
+    	return empDetails().getValue();
     }
 }

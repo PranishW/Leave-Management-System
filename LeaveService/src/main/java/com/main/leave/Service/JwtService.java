@@ -33,6 +33,10 @@ public class JwtService {
 	public Long extractEmpId(String token) {
 		return extractClaim(token, claims -> claims.get("empId", Long.class));
 	}
+	
+	public String extractName(String token) {
+		return extractClaim(token, claims -> claims.get("name", String.class));
+	}
 
 	private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
 		// TODO Auto-generated method stub
