@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.main.leave.Service.EmployeeLeaveRequestService;
+import com.main.leave.Service.LeaveRequestService;
 import com.main.leave.models.LeaveBalance;
 import com.main.leave.models.LeaveRequest;
 import com.main.leave.utils.SecurityUtil;
@@ -23,7 +23,7 @@ import com.main.leave.utils.SecurityUtil;
 public class EmployeeLeaveController {
 	
 	@Autowired
-	EmployeeLeaveRequestService empService;
+	LeaveRequestService empService;
 	
 	@Autowired
 	SecurityUtil secUtil;

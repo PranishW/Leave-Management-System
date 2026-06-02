@@ -16,7 +16,7 @@ import com.main.vo.MailEvent;
 import com.main.vo.Manager;
 
 @Service
-public class EmployeeLeaveRequestService {
+public class LeaveRequestService {
 	@Autowired
 	LeaveRequestsRepository leavereqRepo;
 	
@@ -31,7 +31,7 @@ public class EmployeeLeaveRequestService {
 	
 	private final KafkaTemplate<String, MailEvent> kafkatemplate;
 	
-	public EmployeeLeaveRequestService(KafkaTemplate<String, MailEvent> kafkatemplate)
+	public LeaveRequestService(KafkaTemplate<String, MailEvent> kafkatemplate)
 	{
 		this.kafkatemplate = kafkatemplate;
 	}
