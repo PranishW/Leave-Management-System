@@ -1,5 +1,46 @@
 package com.main.leave.Controller;
 
-public class MangerLeaveController {
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.main.leave.Service.LeaveRequestService;
+import com.main.leave.models.LeaveRequest;
+import com.main.leave.utils.SecurityUtil;
+
+@RestController
+@RequestMapping("/manager")
+public class MangerLeaveController {
+	
+	@Autowired
+	LeaveRequestService empService;
+	
+	@Autowired
+	SecurityUtil secUtil;
+	
+	@GetMapping("/showLeaveRequestForManager")
+	public @ResponseBody ResponseEntity<Page<LeaveRequest>> getLeaveRequestsForManager(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int size)
+	{
+		try
+		{
+			long managerId = secUtil.getLoggedinEmpId();
+			Page<LeaveRequest> leaveList = empService.getLeaveRequestsManager(managerId,page,size);
+			if(leaveList.isEmpty())
+				return ResponseEntity.noContent().build();
+			return ResponseEntity.ok(leaveList);
+		}
+		catch(Exception e)
+		{
+			System.out.println("in getLeaveRequestsForManager catch :- "+e);
+			return ResponseEntity.internalServerError().build();
+		}
+	}
 }

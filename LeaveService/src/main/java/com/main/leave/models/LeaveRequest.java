@@ -16,6 +16,7 @@ public class LeaveRequest {
 	private String endDate;
 	private int leaveDays;
 	private String status;
+	private long assignedManagerId;
 	public Long getLeaveRequestId() {
 		return leaveRequestId;
 	}
@@ -48,5 +49,11 @@ public class LeaveRequest {
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	public long getAssignedManagerId() {
+		return assignedManagerId;
+	}
+	public void setAssignedManagerId(long assignedManagerId) {
+		this.assignedManagerId = assignedManagerId;
 	}
 }

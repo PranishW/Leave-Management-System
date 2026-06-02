@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +53,7 @@ public class LeaveRequestService {
 				leaveReq.setStatus("Pending");
 				lb.setRemaining(lb.getRemaining()-leaveReq.getLeaveDays());
 				lb.setUsed(lb.getUsed()+leaveReq.getLeaveDays());
+				leaveReq.setAssignedManagerId(mn.getId());
 				leaveReq = leavereqRepo.save(leaveReq);
 				leavebalRepo.save(lb);
 				emailMsg = "Dear "+empName+",\n\nLeave request initiated, pending for approval with your manager ( "+mn.getManagerName()+" , Employee Id - "+mn.getId()+" ) . Leave Request Id - "+leaveReq.getLeaveRequestId()+
@@ -112,5 +116,11 @@ public class LeaveRequestService {
 	public List<LeaveRequest> getLeaveRequests(long empId)
 	{
 		return leavereqRepo.findByEmployeeId(empId);
+	}
+	
+	public Page<LeaveRequest> getLeaveRequestsManager(long managerId,int page,int size)
+	{
+		Pageable pageable = PageRequest.of(page,size);
+		return leavereqRepo.findByAssignedManagerId(managerId,pageable);
 	}
 }

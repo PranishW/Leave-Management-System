@@ -22,7 +22,8 @@ public class WebSecurityConfig {
     {
 		http.csrf(csrf -> csrf.disable())
         .authorizeHttpRequests((requests) -> 
-        requests.anyRequest().authenticated())
+        requests.requestMatchers("/manager/**").hasAuthority("Manager")
+        .anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
