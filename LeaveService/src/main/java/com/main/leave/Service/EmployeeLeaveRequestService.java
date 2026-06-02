@@ -1,9 +1,10 @@
 package com.main.leave.Service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.main.leave.Interfaces.EmployeeClient;
@@ -106,5 +107,10 @@ public class EmployeeLeaveRequestService {
 		mail.setMsg(msg);
 		mail.setStatus(leaveReq.getStatus());
 		mail.setLeaveReqId(leaveReq.getLeaveRequestId());
+	}
+	
+	public List<LeaveRequest> getLeaveRequests(long empId)
+	{
+		return leavereqRepo.findByEmployeeId(empId);
 	}
 }

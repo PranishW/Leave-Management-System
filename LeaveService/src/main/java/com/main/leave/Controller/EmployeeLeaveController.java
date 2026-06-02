@@ -1,5 +1,7 @@
 package com.main.leave.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,13 +48,29 @@ public class EmployeeLeaveController {
 	{
 		try {
 			long authId=secUtil.getLoggedinEmpId();
-			String role = secUtil.getCurrentRole();
-			if (authId == 0 || (authId!=empId && !"Manager".equalsIgnoreCase(role)))
+			if (authId == 0 || authId!=empId )
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 			LeaveBalance leaveBal = empService.getLeaveBalance(empId);
 			return ResponseEntity.ok(leaveBal);
 		} catch (Exception e) {
 			System.out.println("in showLeaveBalance catch :- "+e);
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+	
+	@GetMapping("/showLeaveRequests/{empId}")
+	public @ResponseBody ResponseEntity<List<LeaveRequest>> showLeaveRequests(@PathVariable long empId)
+	{
+		try {
+			long authId=secUtil.getLoggedinEmpId();
+			if (authId == 0 || authId!=empId )
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+			List<LeaveRequest> leaveRequests = empService.getLeaveRequests(empId);
+			if(leaveRequests.isEmpty())
+				return ResponseEntity.noContent().build();
+			return ResponseEntity.ok(leaveRequests);
+		} catch (Exception e) {
+			System.out.println("in showLeaveRequests catch :- "+e);
 			return ResponseEntity.internalServerError().build();
 		}
 	}
