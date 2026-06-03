@@ -1,6 +1,7 @@
 package com.main.leave.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,8 @@ import com.main.leave.Interfaces.LeaveBalanceRepository;
 import com.main.leave.Interfaces.LeaveRequestsRepository;
 import com.main.leave.models.LeaveBalance;
 import com.main.leave.models.LeaveRequest;
+import com.main.leave.models.LeaveStatus;
+import com.main.vo.EmployeeDTO;
 import com.main.vo.MailEvent;
 import com.main.vo.Manager;
 
@@ -122,5 +125,51 @@ public class LeaveRequestService {
 	{
 		Pageable pageable = PageRequest.of(page,size);
 		return leavereqRepo.findByAssignedManagerId(managerId,pageable);
+	}
+	
+	public String updateLeaveStatus(long leaveRequestId,long managerId,LeaveStatus leaveStatus,String managerName)
+	{
+		EmployeeDTO empDetails=null;
+		LeaveRequest leaveReq = null;
+		LeaveBalance leaveBal=null;
+		String msg="",emailMsg="";
+		try
+		{
+			leaveReq = leavereqRepo.findById(leaveRequestId).get();
+			if(managerId!=leaveReq.getAssignedManagerId())
+				return "Forbidden";
+			if(!"Pending".equalsIgnoreCase(leaveReq.getStatus()))
+				return "Leave Request Id "+leaveRequestId+" is already Approved/Rejected";
+			leaveReq.setStatus(leaveStatus.getStatus());
+			empDetails = empClient.getEmployeeDetails(leaveReq.getEmployeeId());
+			leaveReq = leavereqRepo.save(leaveReq);
+			if("Rejected".equalsIgnoreCase(leaveReq.getStatus()))
+			{
+				leaveBal = getLeaveBalance(leaveReq.getEmployeeId());
+				leaveBal.setRemaining(leaveBal.getRemaining()+leaveReq.getLeaveDays());
+				leaveBal.setUsed(leaveBal.getUsed()-leaveReq.getLeaveDays());
+				leaveBal = leavebalRepo.save(leaveBal);
+			}
+			
+			msg = "Your Leave Request is "+leaveStatus.getStatus()+" . Leave Request Id - "+leaveReq.getLeaveRequestId();
+			emailMsg = "Dear "+empDetails.getName()+",\n\nYour Leave Request ( Id : "+leaveReq.getLeaveRequestId()+" ) is "+leaveStatus.getStatus()+
+			" by your manager ( "+managerName+" , Employee Id - "+managerId+" ) ."+
+			"\n\nLeave From : "+leaveReq.getStartDate()+"\nLeave Till : "+leaveReq.getEndDate()+"\nLeave Days : "+leaveReq.getLeaveDays()+
+			"\n\nRegards,\nLeave Service LTD";
+			MailEvent mail = new MailEvent();
+			setEmailEvent(mail, leaveReq, empDetails.getEmailId(), emailMsg);
+			sendEmailMsg(mail);
+		}
+		catch(NoSuchElementException e)
+		{
+			System.out.println("in updateLeaveStatus catch NoSuchElementException :- "+e);
+			return "NO_CONTENT";
+		}
+		catch(Exception e)
+		{
+			System.out.println("in updateLeaveStatus catch :- "+e);
+			throw e;
+		}
+		return msg;
 	}
 }
