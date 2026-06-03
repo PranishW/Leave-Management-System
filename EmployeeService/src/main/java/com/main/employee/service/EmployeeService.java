@@ -1,6 +1,8 @@
 package com.main.employee.service;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +14,7 @@ import com.main.employee.models.Employee;
 import com.main.employee.models.UserPrincipal;
 import com.main.employee.repository.EmployeeRepository;
 import com.main.employee.utils.SecurityUtil;
+import com.main.vo.EmployeeDTO;
 import com.main.vo.Manager;
 
 @Service
@@ -80,5 +83,37 @@ public class EmployeeService {
 			System.out.println("Error fetching manager details"+e);
 		}
 		return mn;
+	}
+	public EmployeeDTO getEmployeeById(long empId)
+	{
+		Employee manager=null,emp=null;
+		EmployeeDTO empDetails=null;
+		try
+		{
+			manager = getEmployee();
+			emp = emprepo.findByEmployeeIdAndManagerId(empId, manager.getEmployeeId()+"");
+			if(emp==null)
+				return empDetails;
+			empDetails = new EmployeeDTO(emp.getEmail(),emp.getName());
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error fetching employee details by id"+e);
+		}
+		return empDetails;
+	}
+	public List<Employee> getAllEmployees()
+	{
+		Employee manager = null;
+		try
+		{
+			manager = getEmployee();
+			return emprepo.findAllByManagerId(manager.getEmployeeId()+"");
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error fetching all employee details by manager id"+e);
+		}
+		return null;
 	}
 }

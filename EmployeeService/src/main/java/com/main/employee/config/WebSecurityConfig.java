@@ -35,6 +35,7 @@ public class WebSecurityConfig {
         .authorizeHttpRequests((requests) -> 
         requests.requestMatchers("/employees/login").permitAll()
         .requestMatchers("/employees/getManagerDetails").hasAuthority("Employee")
+        .requestMatchers("/employees/getEmployeeDetails/**","/employees/getMyTeam").hasAuthority("Manager")
         .anyRequest().authenticated()
         )
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
