@@ -8,12 +8,12 @@ import com.main.leave.config.FeignConfig;
 import com.main.vo.EmployeeDTO;
 import com.main.vo.Manager;
 
-@FeignClient(name = "emp-client", url = "${application.services.emp.url}",configuration = FeignConfig.class)
+@FeignClient(name = "EMPLOYEESERVICE",configuration = FeignConfig.class)
 public interface EmployeeClient {
 	
-	@GetMapping("/getManagerDetails")
+	@GetMapping("/employees/getManagerDetails")
 	public Manager getManagerDetails();
 	
-	@GetMapping("/getEmployeeDetails/{empId}")
+	@GetMapping("/employees/getEmployeeDetails/{empId}")
 	public EmployeeDTO getEmployeeDetails(@PathVariable long empId);
 }
