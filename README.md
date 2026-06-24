@@ -81,9 +81,10 @@ Handles:
 
 Handles:
 
-* Leave Application
+* Employee Leave Application
+* Employee Leave Balance
 * Leave Approval / Rejection
-* Manager Leave Requests
+* Manager Leave Requests Operations
 * Kafka Event Publishing
 
 ## Email Service
